@@ -1,8 +1,12 @@
+import datetime
+from urllib import response
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views import View
 from django.contrib.auth.models import User
 from .models import *
 from django.contrib.auth import authenticate,login,logout
+import jwt
 # Create your views here.
 
 class SignUpView(View):
@@ -35,9 +39,19 @@ class SignInView(View):
         user = authenticate(username=username,password=password)
         if user is not None:
             login(request,user)
+            payload = {
+                "username" : user.get_username(),
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+                "iat": datetime.datetime.utcnow()
+            }
+            token = jwt.encode(payload,'antaptii',algorithm='HS256')
+            response = HttpResponse('something')
+            response.data = { "success" : True , "user":user}
+            response.set_cookie(key='token', value=token, httponly=True)
             return redirect('home')
+            # code for linking cookie
         else:
-            return render(request,'signin.html',{'error':'Invalid Credentials'})
+            return render(request,'signin.html',{"error":"Invalid Credentials"})
 
 class SignOutView(View):
     def get(self,request):
