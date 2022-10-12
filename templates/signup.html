@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+</head>
+<body>
+    <h3>SignUp</h3>
+    <form action="" method="POST">
+        {% csrf_token %}
+        Name: <input type="text" name="name" required><br>
+        Username: <input type="text" name="username" required><br>
+        Contact: <input type="text" name="contact" required><br>
+        Password: <input type="password" name="pass1" required><br>
+        Confirm Password: <input type="password" name="pass2" required><br>
+        <input type="submit" value="Signup">
+    </form>
+</body>
+</html>
