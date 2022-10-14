@@ -1,6 +1,6 @@
 import datetime
 from urllib import response
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.views import View
 from django.contrib.auth.models import User
@@ -48,11 +48,11 @@ class SignInView(View):
                 "iat": datetime.datetime.utcnow()
             }
             token = jwt.encode(payload,'antaptii',algorithm='HS256') #payload encoded into cookie
-            response = HttpResponse('something')
+            response = HttpResponseRedirect('/',{'user':user})  #redirects to home
             response.data = { "success" : True , "user":user}
             response.set_cookie(key='token', value=token, httponly=True)  
-            return redirect('home')
             # code for linking cookie
+            return response
         else:
             return render(request,'signin.html',{"error":"Invalid Credentials"})
 

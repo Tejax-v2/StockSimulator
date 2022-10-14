@@ -3,4 +3,7 @@ from .models import User_Info
 
 # Register your models here.
 
-admin.site.register(User_Info)
+class User_Info_Admin(admin.ModelAdmin):
+    list_display = ['user_id','name','contact','total_amt']
+
+admin.site.register(User_Info,User_Info_Admin)
