@@ -1,18 +1,22 @@
 from django.shortcuts import render
 from django.views import View
 from django.contrib.auth.models import User
-import jwt
+from django.contrib.auth import authenticate,login,logout
+from authentication.models import User_Info
 
 class HomeView(View):
     def get(self,request):
-        token = request.COOKIES.get('token')  #check if there is any cookie stored in browser
-        if token==None:  
-            return render(request,'index.html',{'error':'Please Sign In'})
-        else:  #if cookie found
-            try:
-                payload = jwt.decode(token, "antaptii", algorithms = 'HS256')  #decoding cookie
-            except:
+        try:
+            username = request.session.get('username')  #get username from session id
+            myuser = User.objects.get(username=username)  #get the user object
+            user_info = User_Info.objects.get(user_id=myuser)  #get the user_info object
+            if(user_info.session_id == request.session.session_key):  #if session key in cookies matches the session key in database
+                getuser = User.objects.get(username=username)  #getting user from database
+                return render(request,'index.html',{'getuser':getuser})  #returns signin page with user
+            else:
+                if myuser.is_authenticated:
+                    logout(request)
                 return render(request,'index.html',{'error':'Please Sign In'})
-            user = User.objects.get(username=payload['username'])  #getting logged in user
-            return render(request,'index.html',{'user':user})
+        except:  
+            return render(request,'index.html',{'error':'Please Sign In'})
 
