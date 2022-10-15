@@ -13,6 +13,11 @@
     <!-- All code for homepage when user is logged in will be written in this block-->
         <p>Welcome {{ user.username }}!</p>
         <p><a href="/auth/signout">Logout</a></p>
+
+        <table id="stocktable">
+            
+        </table>
+        <script src="{static 'js/loggedhomescript.js'}"></script>
     {% else %}
     <!-- All code for homepage when user is not logged in will be written in this block-->
         <p><a href="/auth/signin">Login</a></p>
