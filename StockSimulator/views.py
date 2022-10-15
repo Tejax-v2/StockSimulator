@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from django.contrib.auth.models import User
-import jwt
+from django.contrib.auth import authenticate,login,logout
 from authentication.models import User_Info
 
 class HomeView(View):
@@ -14,6 +14,8 @@ class HomeView(View):
                 getuser = User.objects.get(username=username)  #getting user from database
                 return render(request,'index.html',{'getuser':getuser})  #returns signin page with user
             else:
+                if myuser.is_authenticated:
+                    logout(request)
                 return render(request,'index.html',{'error':'Please Sign In'})
         except:  
             return render(request,'index.html',{'error':'Please Sign In'})
