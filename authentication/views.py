@@ -41,17 +41,12 @@ class SignInView(View):
         user = authenticate(username=username,password=password)  
         if user is not None:  #if user gets authenticated
             login(request,user)
-            #dictionary named payload to be encoded into cookie
-            payload = {
-                "username" : user.get_username(),
-                "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-                "iat": datetime.datetime.utcnow()
-            }
-            token = jwt.encode(payload,'antaptii',algorithm='HS256') #payload encoded into cookie
-            response = HttpResponseRedirect('/',{'user':user})  #redirects to home
-            response.data = { "success" : True , "user":user}
-            response.set_cookie(key='token', value=token, httponly=True)  
-            # code for linking cookie
+            request.session['username'] = user.get_username()  #username stored in session
+            response = redirect('home') #redirects to home
+            response.data = { "success" : True , "user":user} 
+            user_info = User_Info.objects.get(user_id=user) #getting user_info object
+            user_info.session_id = request.session.session_key #storing session key in database
+            user_info.save() #saving the changes
             return response
         else:
             return render(request,'signin.html',{"error":"Invalid Credentials"})
